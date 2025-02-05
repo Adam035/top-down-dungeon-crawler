@@ -24,9 +24,4 @@ public class Player extends Entity {
     public void removeMovementKey(int keyCode) {
         movementKeys.remove(keyCode);
     }
-
-    @Override
-    public void paint(Graphics g) {
-        g.drawImage(getImage(), getX(), getY(), 72, 72, null);
-    }
 }

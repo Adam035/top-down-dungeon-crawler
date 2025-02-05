@@ -10,7 +10,7 @@ public class Bullet {
     public Bullet(int x, int y, Direction direction) {
         this.x = x;
         this.y = y;
-        this.speed = 10;
+        this.speed = 15;
         this.direction = direction;
     }
 

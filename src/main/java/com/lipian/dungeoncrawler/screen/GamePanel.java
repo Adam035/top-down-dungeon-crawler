@@ -3,7 +3,6 @@ package com.lipian.dungeoncrawler.screen;
 import com.lipian.dungeoncrawler.GameLogic;
 import com.lipian.dungeoncrawler.InputHandler;
 
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

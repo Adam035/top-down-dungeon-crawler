@@ -11,8 +11,7 @@ import java.io.IOException;
 @Getter
 @Setter
 public class Entity {
-    public static final int SIZE = 72;
-    private int x, y, strength, attackSpeed, health, maxHealth, speed;
+    private int x, y, width, height, strength, attackSpeed, health, maxHealth, speed;
     private Direction direction, attackDirection;
     private Image image;
     private long lastAttackTime;
@@ -45,7 +44,7 @@ public class Entity {
             case DOWN -> nextY += (int) (speed * multiplier);
             case LEFT -> nextX -= (int) (speed * multiplier);
         }
-        return new Rectangle(nextX, nextY, SIZE, SIZE);
+        return new Rectangle(nextX, nextY, width, height);
     }
 
     public Bullet attack() {
@@ -54,7 +53,13 @@ public class Entity {
     }
 
     public Rectangle getBounds() {
-        return new Rectangle(getX(), getY(), SIZE, SIZE);
+        return new Rectangle(getX(), getY(), width, height);
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
+        width = image.getWidth(null);
+        height = image.getHeight(null);
     }
 
     protected Image loadImage(String filePath) {
@@ -70,8 +75,8 @@ public class Entity {
     public void paint(Graphics g) {
         g.drawImage(image, x, y, null);
         g.setColor(Color.BLACK);
-        g.fillRect(x, y + SIZE, SIZE, 3);
+        g.fillRect(x, y + height + 3, width, 3);
         g.setColor(Color.GREEN);
-        g.fillRect(x + 1, y + SIZE + 1, SIZE * (health / maxHealth) - 2, 1);
+        g.fillRect(x + 1, y + height + 4, (int) (width * ((double) health / (double) maxHealth) - 2), 1);
     }
 }

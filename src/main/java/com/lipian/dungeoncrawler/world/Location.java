@@ -1,5 +1,6 @@
 package com.lipian.dungeoncrawler.world;
 
+import com.lipian.dungeoncrawler.player.Enemy;
 import lombok.Getter;
 
 import java.awt.*;
@@ -11,10 +12,13 @@ public class Location {
     private final int WIDTH = 17, HEIGHT = 11;
     private List<Tile> tiles;
     private Set<Wall> walls;
+    private Set<Enemy> enemies;
 
     protected Location() {
         tiles = new ArrayList<>();
         walls = new HashSet<>();
+        enemies = new HashSet<>();
+        enemies.add(new Enemy(400, 200));
     }
 
     public void addTile(Tile tile) {
@@ -34,5 +38,6 @@ public class Location {
     public void paint (Graphics g) {
         tiles.stream().filter(Objects::nonNull)
                 .forEach(tile ->  tile.paint(g));
+        enemies.forEach(enemy -> enemy.paint(g));
     }
 }

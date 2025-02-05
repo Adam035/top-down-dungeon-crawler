@@ -2,6 +2,7 @@ package com.lipian.dungeoncrawler;
 
 import com.lipian.dungeoncrawler.player.Bullet;
 import com.lipian.dungeoncrawler.player.Direction;
+import com.lipian.dungeoncrawler.player.Enemy;
 import com.lipian.dungeoncrawler.player.Player;
 import com.lipian.dungeoncrawler.world.Location;
 import com.lipian.dungeoncrawler.world.LocationLoader;
@@ -29,6 +30,7 @@ public class GameLogic {
         handleMovement();
         handleAttack();
         handleBullets();
+        handleEnemies();
     }
 
     public void paint(Graphics g) {
@@ -37,11 +39,15 @@ public class GameLogic {
         player.paint(g);
     }
 
+    private void handleEnemies() {
+        location.getEnemies().removeIf(enemy -> enemy.getHealth() <= 0);
+    }
+
     private void handleBullets() {
         Iterator<Bullet> iterator = bullets.iterator();
         while (iterator.hasNext()) {
             Bullet bullet = iterator.next();
-            if (isCollidingWithWalls(bullet.getBounds()))
+            if (isColliding(bullet.getBounds()))
                 iterator.remove();
             else bullet.move();
         }
@@ -53,7 +59,7 @@ public class GameLogic {
             return;
 
         long currentTime = System.currentTimeMillis();
-        int cooldown = (8 - player.getAttackSpeed()) * 100;
+        int cooldown = (10 - player.getAttackSpeed()) * 100;
         if (currentTime - player.getLastAttackTime() < cooldown)
             return;
 
@@ -67,25 +73,33 @@ public class GameLogic {
         double speed = movementKeys.size() != 2 ? 1 : 0.8;
 
         if (movementKeys.contains(KeyEvent.VK_W))
-            if (!isCollidingWithWalls(player.getNextBounds(Direction.UP, speed)))
+            if (!isColliding(player.getNextBounds(Direction.UP, speed)))
                 player.move(Direction.UP, speed);
 
         if (movementKeys.contains(KeyEvent.VK_D))
-            if (!isCollidingWithWalls(player.getNextBounds(Direction.RIGHT, speed)))
+            if (!isColliding(player.getNextBounds(Direction.RIGHT, speed)))
                 player.move(Direction.RIGHT, speed);
 
         if (movementKeys.contains(KeyEvent.VK_S))
-            if (!isCollidingWithWalls(player.getNextBounds(Direction.DOWN, speed)))
+            if (!isColliding(player.getNextBounds(Direction.DOWN, speed)))
                 player.move(Direction.DOWN, speed);
 
         if (movementKeys.contains(KeyEvent.VK_A)) {
-            if (!isCollidingWithWalls(player.getNextBounds(Direction.LEFT, speed)))
+            if (!isColliding(player.getNextBounds(Direction.LEFT, speed)))
                 player.move(Direction.LEFT, speed);
         }
     }
 
-    private boolean isCollidingWithWalls(Rectangle nextBounds) {
-        return location.getWalls().stream()
-                .anyMatch(wall -> wall.getBounds().intersects(nextBounds));
+    private boolean isColliding(Rectangle nextBounds) {
+        return location.getEnemies().stream()
+                .filter(enemy -> enemy.getBounds().intersects(nextBounds))
+                .findAny()
+                .map(enemy -> {
+                    enemy.setHealth(enemy.getHealth() - player.getStrength());
+                    return true;
+                })
+                .orElse(location.getWalls().stream()
+                        .anyMatch(wall -> wall.getBounds().intersects(nextBounds)));
+
     }
 }
