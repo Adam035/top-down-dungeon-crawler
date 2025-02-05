@@ -1,7 +1,8 @@
 package com.lipian.dungeoncrawler.screen;
 
-import com.lipian.dungeoncrawler.world.Location;
-import com.lipian.dungeoncrawler.world.LocationLoader;
+import com.lipian.dungeoncrawler.GameLogic;
+import com.lipian.dungeoncrawler.InputHandler;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,13 +10,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class GamePanel extends JPanel implements ActionListener {
-    private static final int DELAY = 10;
-    private Location location;
+    private static final int DELAY = 16;
+    private final GameLogic gameLogic;
+    private final InputHandler inputHandler;
+
     public GamePanel() {
         setLayout(null);
         setFocusable(true);
         setBackground(Color.BLACK);
-        location = LocationLoader.getMap("src/main/resources/location.txt");
+        gameLogic = new GameLogic();
+        inputHandler = new InputHandler(gameLogic);
+        addKeyListener(inputHandler);
         start();
     }
 
@@ -26,15 +31,16 @@ public class GamePanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        gameLogic.update();
         repaint();
     }
 
     @Override
-    public void paintComponent(Graphics g) {
+    protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        location.paint(g);
+        gameLogic.paint(g);
     }
 }

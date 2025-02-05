@@ -15,6 +15,10 @@ public abstract class Tile {
     private int x, y;
     private Image image;
 
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, SIZE, SIZE);
+    }
+
     protected Image loadImage(String filePath) {
         Image image;
         try {
@@ -23,5 +27,9 @@ public abstract class Tile {
             image = null;
         }
         return image;
+    }
+
+    protected void paint(Graphics g) {
+        g.drawImage(image, x, y, null);
     }
 }
